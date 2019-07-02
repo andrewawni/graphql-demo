@@ -1,0 +1,10 @@
+#endpoint: ''
+#endpoint: ''
+endpoint: https://eu1.prisma.sh/andrew-awni/graphql-demo/dev
+
+
+datamodel: datamodel.prisma
+
+generate: 
+- generator: javascript-client
+  output: ../src/generated/prisma-client
