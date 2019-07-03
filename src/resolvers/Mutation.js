@@ -2,9 +2,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { getUserId, APP_SECRET } = require('../utils');
 
-function createTodo(root, args, context) {
+async function createTodo(root, args, context) {
     const userID = getUserId(context);
-    return context.prisma.createTodo({
+    
+    return await context.prisma.createTodo({
         title: args.title,
         owner: { connect: { id: userID } },
     });
@@ -25,12 +26,10 @@ function updateTodo(parent, args, context) {
     });
 }
 
-function deleteTodo(parent, args, context) {
-    let del = context.prisma.deleteLink({ id: args.id });
-    return del;
+async function deleteTodo(parent, args, context) {
+    const deletedTodo = await context.prisma.deleteTodo({ id: args.id });
+    return deletedTodo;
 }
-
-// signup(name: String!, email: String!, password: String!):AuthPayLoad
 
 async function signup(parent, args, context) {
 

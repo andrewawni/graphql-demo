@@ -1,6 +1,6 @@
 type Query {
     info: String!
-    feed: [Task!]!
+    feed: [Todo!]!
     todo(id: ID!): Todo!
 }
 
