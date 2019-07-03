@@ -1,14 +1,27 @@
+const { getUserId, APP_SECRET } = require('../utils');
+
 function info() {
 
     return 'Testing';
 }
 
 function feed(root, args, context, info) {
-    return context.prisma.links();
+    const userID = getUserId(context);
+    return context.prisma.todos({
+        where: {
+            owner: {
+                id: userID
+            }
+        }
+    });
 }
 
-function link(root, args, context, info) {
-    return context.prisma.link({ id: args.id });
+function todo(root, args, context, info) {
+    return context.prisma.todo({ id: args.id });
 }
 
-module.exports = { info, feed, link};
+module.exports = {
+    info,
+    feed,
+    todo,
+};

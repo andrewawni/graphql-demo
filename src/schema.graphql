@@ -1,22 +1,21 @@
 type Query {
     info: String!
-    feed: [Link!]!
-    link(id: ID!): Link!
+    feed: [Task!]!
+    todo(id: ID!): Todo!
 }
 
 type Mutation {
-    post(url: String!, description: String!): Link! 
-    updateLink(id: ID!, description: String, url: String): Link!
-    deleteLink(id: ID!): Link! 
+    createTodo(title: String!): Todo! 
+    updateTodo(id: ID!, title: String): Todo!
+    deleteTodo(id: ID!): Todo! 
     signup(name: String!, email: String!, password: String!):AuthPayLoad!
     signin(email: String!, password: String!):AuthPayLoad!
 }
 
-type Link {
+type Todo {
     id: ID!
-    description: String!
-    url: String!
-    postedBy: User
+    title: String!
+    owner: User!
 }
 
 type AuthPayLoad {
@@ -28,5 +27,5 @@ type User {
     id: ID! 
     name: String!
     email: String!  
-    links: [Link!]!  
+    todos: [Todo!]! 
 }

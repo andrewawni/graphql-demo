@@ -2,26 +2,22 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { getUserId, APP_SECRET } = require('../utils');
 
-function post(root, args, context) {
+function createTodo(root, args, context) {
     const userID = getUserId(context);
-    return context.prisma.createLink({
-        url: args.url,
-        description: args.description,
-        postedBy: { connect: { id: userID } },
+    return context.prisma.createTodo({
+        title: args.title,
+        owner: { connect: { id: userID } },
     });
 }
 
-function updateLink(parent, args, context) {
-    let link = {};
-    if (args.description)
-        link.description = args.description;
-    if (args.url)
-        link.url = args.url;
-
-    return context.prisma.updateLink({
+function updateTodo(parent, args, context) {
+    let todo = {};
+    if (args.title)
+        todo.title = args.title;
+    
+    return context.prisma.updateTodo({
         data: {
-            description: link.description,
-            url: link.url
+            title: todo.title,
         },
         where: {
             id: args.id
@@ -29,7 +25,7 @@ function updateLink(parent, args, context) {
     });
 }
 
-function deleteLink(parent, args, context) {
+function deleteTodo(parent, args, context) {
     let del = context.prisma.deleteLink({ id: args.id });
     return del;
 }
@@ -64,10 +60,12 @@ async function signin(parent, args, context) {
         user,
     }
 }
+
+
 module.exports = {
-    post,
-    updateLink,
-    deleteLink,
+    createTodo,
+    updateTodo,
+    deleteTodo,
     signup,
     signin,
 }

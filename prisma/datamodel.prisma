@@ -1,10 +1,8 @@
-type Link {
+type Todo {
     id: ID! @id
     createdAt: DateTime! @createdAt
-    updatedAt: DateTime! @updatedAt
-    description: String!
-    url: String!
-    postedBy: User
+    title: String! 
+    owner: User
 }
 
 type User {
@@ -12,6 +10,6 @@ type User {
     name: String!
     email: String! @unique
     password: String!
-    links: [Link!]!
+    todos: [Todo!]!
 }
 
