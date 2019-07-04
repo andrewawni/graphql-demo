@@ -3,6 +3,7 @@ type Todo {
     createdAt: DateTime! @createdAt
     title: String! 
     owner: User
+    tasks: [Task!]! @relation(onDelete: CASCADE)
 }
 
 type User {
@@ -10,6 +11,13 @@ type User {
     name: String!
     email: String! @unique
     password: String!
-    todos: [Todo!]!
+    todos: [Todo!]! @relation(onDelete: CASCADE)
 }
 
+type Task {
+    id: ID! @id
+    title: String!
+    description: String
+    isComplete: Boolean! @default(value: false)
+    todo: Todo
+}

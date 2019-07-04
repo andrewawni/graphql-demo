@@ -16,6 +16,7 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export type Maybe<T> = T | undefined | null;
 
 export interface Exists {
+  task: (where?: TaskWhereInput) => Promise<boolean>;
   todo: (where?: TodoWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
 }
@@ -39,6 +40,25 @@ export interface Prisma {
    * Queries
    */
 
+  task: (where: TaskWhereUniqueInput) => TaskNullablePromise;
+  tasks: (args?: {
+    where?: TaskWhereInput;
+    orderBy?: TaskOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Task>;
+  tasksConnection: (args?: {
+    where?: TaskWhereInput;
+    orderBy?: TaskOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => TaskConnectionPromise;
   todo: (where: TodoWhereUniqueInput) => TodoNullablePromise;
   todoes: (args?: {
     where?: TodoWhereInput;
@@ -83,6 +103,22 @@ export interface Prisma {
    * Mutations
    */
 
+  createTask: (data: TaskCreateInput) => TaskPromise;
+  updateTask: (args: {
+    data: TaskUpdateInput;
+    where: TaskWhereUniqueInput;
+  }) => TaskPromise;
+  updateManyTasks: (args: {
+    data: TaskUpdateManyMutationInput;
+    where?: TaskWhereInput;
+  }) => BatchPayloadPromise;
+  upsertTask: (args: {
+    where: TaskWhereUniqueInput;
+    create: TaskCreateInput;
+    update: TaskUpdateInput;
+  }) => TaskPromise;
+  deleteTask: (where: TaskWhereUniqueInput) => TaskPromise;
+  deleteManyTasks: (where?: TaskWhereInput) => BatchPayloadPromise;
   createTodo: (data: TodoCreateInput) => TodoPromise;
   updateTodo: (args: {
     data: TodoUpdateInput;
@@ -124,6 +160,9 @@ export interface Prisma {
 }
 
 export interface Subscription {
+  task: (
+    where?: TaskSubscriptionWhereInput
+  ) => TaskSubscriptionPayloadSubscription;
   todo: (
     where?: TodoSubscriptionWhereInput
   ) => TodoSubscriptionPayloadSubscription;
@@ -148,6 +187,16 @@ export type TodoOrderByInput =
   | "title_ASC"
   | "title_DESC";
 
+export type TaskOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "title_ASC"
+  | "title_DESC"
+  | "description_ASC"
+  | "description_DESC"
+  | "isComplete_ASC"
+  | "isComplete_DESC";
+
 export type UserOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -160,7 +209,7 @@ export type UserOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export type TodoWhereUniqueInput = AtLeastOne<{
+export type TaskWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
@@ -202,6 +251,9 @@ export interface TodoWhereInput {
   title_ends_with?: Maybe<String>;
   title_not_ends_with?: Maybe<String>;
   owner?: Maybe<UserWhereInput>;
+  tasks_every?: Maybe<TaskWhereInput>;
+  tasks_some?: Maybe<TaskWhereInput>;
+  tasks_none?: Maybe<TaskWhereInput>;
   AND?: Maybe<TodoWhereInput[] | TodoWhereInput>;
   OR?: Maybe<TodoWhereInput[] | TodoWhereInput>;
   NOT?: Maybe<TodoWhereInput[] | TodoWhereInput>;
@@ -272,12 +324,80 @@ export interface UserWhereInput {
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
 }
 
+export interface TaskWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  title?: Maybe<String>;
+  title_not?: Maybe<String>;
+  title_in?: Maybe<String[] | String>;
+  title_not_in?: Maybe<String[] | String>;
+  title_lt?: Maybe<String>;
+  title_lte?: Maybe<String>;
+  title_gt?: Maybe<String>;
+  title_gte?: Maybe<String>;
+  title_contains?: Maybe<String>;
+  title_not_contains?: Maybe<String>;
+  title_starts_with?: Maybe<String>;
+  title_not_starts_with?: Maybe<String>;
+  title_ends_with?: Maybe<String>;
+  title_not_ends_with?: Maybe<String>;
+  description?: Maybe<String>;
+  description_not?: Maybe<String>;
+  description_in?: Maybe<String[] | String>;
+  description_not_in?: Maybe<String[] | String>;
+  description_lt?: Maybe<String>;
+  description_lte?: Maybe<String>;
+  description_gt?: Maybe<String>;
+  description_gte?: Maybe<String>;
+  description_contains?: Maybe<String>;
+  description_not_contains?: Maybe<String>;
+  description_starts_with?: Maybe<String>;
+  description_not_starts_with?: Maybe<String>;
+  description_ends_with?: Maybe<String>;
+  description_not_ends_with?: Maybe<String>;
+  isComplete?: Maybe<Boolean>;
+  isComplete_not?: Maybe<Boolean>;
+  todo?: Maybe<TodoWhereInput>;
+  AND?: Maybe<TaskWhereInput[] | TaskWhereInput>;
+  OR?: Maybe<TaskWhereInput[] | TaskWhereInput>;
+  NOT?: Maybe<TaskWhereInput[] | TaskWhereInput>;
+}
+
+export type TodoWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
 export type UserWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
   email?: Maybe<String>;
 }>;
 
-export interface TodoCreateInput {
+export interface TaskCreateInput {
+  id?: Maybe<ID_Input>;
+  title: String;
+  description?: Maybe<String>;
+  isComplete?: Maybe<Boolean>;
+  todo?: Maybe<TodoCreateOneWithoutTasksInput>;
+}
+
+export interface TodoCreateOneWithoutTasksInput {
+  create?: Maybe<TodoCreateWithoutTasksInput>;
+  connect?: Maybe<TodoWhereUniqueInput>;
+}
+
+export interface TodoCreateWithoutTasksInput {
   id?: Maybe<ID_Input>;
   title: String;
   owner?: Maybe<UserCreateOneWithoutTodosInput>;
@@ -295,7 +415,23 @@ export interface UserCreateWithoutTodosInput {
   password: String;
 }
 
-export interface TodoUpdateInput {
+export interface TaskUpdateInput {
+  title?: Maybe<String>;
+  description?: Maybe<String>;
+  isComplete?: Maybe<Boolean>;
+  todo?: Maybe<TodoUpdateOneWithoutTasksInput>;
+}
+
+export interface TodoUpdateOneWithoutTasksInput {
+  create?: Maybe<TodoCreateWithoutTasksInput>;
+  update?: Maybe<TodoUpdateWithoutTasksDataInput>;
+  upsert?: Maybe<TodoUpsertWithoutTasksInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<TodoWhereUniqueInput>;
+}
+
+export interface TodoUpdateWithoutTasksDataInput {
   title?: Maybe<String>;
   owner?: Maybe<UserUpdateOneWithoutTodosInput>;
 }
@@ -320,6 +456,140 @@ export interface UserUpsertWithoutTodosInput {
   create: UserCreateWithoutTodosInput;
 }
 
+export interface TodoUpsertWithoutTasksInput {
+  update: TodoUpdateWithoutTasksDataInput;
+  create: TodoCreateWithoutTasksInput;
+}
+
+export interface TaskUpdateManyMutationInput {
+  title?: Maybe<String>;
+  description?: Maybe<String>;
+  isComplete?: Maybe<Boolean>;
+}
+
+export interface TodoCreateInput {
+  id?: Maybe<ID_Input>;
+  title: String;
+  owner?: Maybe<UserCreateOneWithoutTodosInput>;
+  tasks?: Maybe<TaskCreateManyWithoutTodoInput>;
+}
+
+export interface TaskCreateManyWithoutTodoInput {
+  create?: Maybe<TaskCreateWithoutTodoInput[] | TaskCreateWithoutTodoInput>;
+  connect?: Maybe<TaskWhereUniqueInput[] | TaskWhereUniqueInput>;
+}
+
+export interface TaskCreateWithoutTodoInput {
+  id?: Maybe<ID_Input>;
+  title: String;
+  description?: Maybe<String>;
+  isComplete?: Maybe<Boolean>;
+}
+
+export interface TodoUpdateInput {
+  title?: Maybe<String>;
+  owner?: Maybe<UserUpdateOneWithoutTodosInput>;
+  tasks?: Maybe<TaskUpdateManyWithoutTodoInput>;
+}
+
+export interface TaskUpdateManyWithoutTodoInput {
+  create?: Maybe<TaskCreateWithoutTodoInput[] | TaskCreateWithoutTodoInput>;
+  delete?: Maybe<TaskWhereUniqueInput[] | TaskWhereUniqueInput>;
+  connect?: Maybe<TaskWhereUniqueInput[] | TaskWhereUniqueInput>;
+  set?: Maybe<TaskWhereUniqueInput[] | TaskWhereUniqueInput>;
+  disconnect?: Maybe<TaskWhereUniqueInput[] | TaskWhereUniqueInput>;
+  update?: Maybe<
+    | TaskUpdateWithWhereUniqueWithoutTodoInput[]
+    | TaskUpdateWithWhereUniqueWithoutTodoInput
+  >;
+  upsert?: Maybe<
+    | TaskUpsertWithWhereUniqueWithoutTodoInput[]
+    | TaskUpsertWithWhereUniqueWithoutTodoInput
+  >;
+  deleteMany?: Maybe<TaskScalarWhereInput[] | TaskScalarWhereInput>;
+  updateMany?: Maybe<
+    TaskUpdateManyWithWhereNestedInput[] | TaskUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface TaskUpdateWithWhereUniqueWithoutTodoInput {
+  where: TaskWhereUniqueInput;
+  data: TaskUpdateWithoutTodoDataInput;
+}
+
+export interface TaskUpdateWithoutTodoDataInput {
+  title?: Maybe<String>;
+  description?: Maybe<String>;
+  isComplete?: Maybe<Boolean>;
+}
+
+export interface TaskUpsertWithWhereUniqueWithoutTodoInput {
+  where: TaskWhereUniqueInput;
+  update: TaskUpdateWithoutTodoDataInput;
+  create: TaskCreateWithoutTodoInput;
+}
+
+export interface TaskScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  title?: Maybe<String>;
+  title_not?: Maybe<String>;
+  title_in?: Maybe<String[] | String>;
+  title_not_in?: Maybe<String[] | String>;
+  title_lt?: Maybe<String>;
+  title_lte?: Maybe<String>;
+  title_gt?: Maybe<String>;
+  title_gte?: Maybe<String>;
+  title_contains?: Maybe<String>;
+  title_not_contains?: Maybe<String>;
+  title_starts_with?: Maybe<String>;
+  title_not_starts_with?: Maybe<String>;
+  title_ends_with?: Maybe<String>;
+  title_not_ends_with?: Maybe<String>;
+  description?: Maybe<String>;
+  description_not?: Maybe<String>;
+  description_in?: Maybe<String[] | String>;
+  description_not_in?: Maybe<String[] | String>;
+  description_lt?: Maybe<String>;
+  description_lte?: Maybe<String>;
+  description_gt?: Maybe<String>;
+  description_gte?: Maybe<String>;
+  description_contains?: Maybe<String>;
+  description_not_contains?: Maybe<String>;
+  description_starts_with?: Maybe<String>;
+  description_not_starts_with?: Maybe<String>;
+  description_ends_with?: Maybe<String>;
+  description_not_ends_with?: Maybe<String>;
+  isComplete?: Maybe<Boolean>;
+  isComplete_not?: Maybe<Boolean>;
+  AND?: Maybe<TaskScalarWhereInput[] | TaskScalarWhereInput>;
+  OR?: Maybe<TaskScalarWhereInput[] | TaskScalarWhereInput>;
+  NOT?: Maybe<TaskScalarWhereInput[] | TaskScalarWhereInput>;
+}
+
+export interface TaskUpdateManyWithWhereNestedInput {
+  where: TaskScalarWhereInput;
+  data: TaskUpdateManyDataInput;
+}
+
+export interface TaskUpdateManyDataInput {
+  title?: Maybe<String>;
+  description?: Maybe<String>;
+  isComplete?: Maybe<Boolean>;
+}
+
 export interface TodoUpdateManyMutationInput {
   title?: Maybe<String>;
 }
@@ -340,6 +610,7 @@ export interface TodoCreateManyWithoutOwnerInput {
 export interface TodoCreateWithoutOwnerInput {
   id?: Maybe<ID_Input>;
   title: String;
+  tasks?: Maybe<TaskCreateManyWithoutTodoInput>;
 }
 
 export interface UserUpdateInput {
@@ -376,6 +647,7 @@ export interface TodoUpdateWithWhereUniqueWithoutOwnerInput {
 
 export interface TodoUpdateWithoutOwnerDataInput {
   title?: Maybe<String>;
+  tasks?: Maybe<TaskUpdateManyWithoutTodoInput>;
 }
 
 export interface TodoUpsertWithWhereUniqueWithoutOwnerInput {
@@ -441,6 +713,17 @@ export interface UserUpdateManyMutationInput {
   password?: Maybe<String>;
 }
 
+export interface TaskSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<TaskWhereInput>;
+  AND?: Maybe<TaskSubscriptionWhereInput[] | TaskSubscriptionWhereInput>;
+  OR?: Maybe<TaskSubscriptionWhereInput[] | TaskSubscriptionWhereInput>;
+  NOT?: Maybe<TaskSubscriptionWhereInput[] | TaskSubscriptionWhereInput>;
+}
+
 export interface TodoSubscriptionWhereInput {
   mutation_in?: Maybe<MutationType[] | MutationType>;
   updatedFields_contains?: Maybe<String>;
@@ -467,6 +750,41 @@ export interface NodeNode {
   id: ID_Output;
 }
 
+export interface Task {
+  id: ID_Output;
+  title: String;
+  description?: String;
+  isComplete: Boolean;
+}
+
+export interface TaskPromise extends Promise<Task>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  title: () => Promise<String>;
+  description: () => Promise<String>;
+  isComplete: () => Promise<Boolean>;
+  todo: <T = TodoPromise>() => T;
+}
+
+export interface TaskSubscription
+  extends Promise<AsyncIterator<Task>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  title: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
+  isComplete: () => Promise<AsyncIterator<Boolean>>;
+  todo: <T = TodoSubscription>() => T;
+}
+
+export interface TaskNullablePromise
+  extends Promise<Task | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  title: () => Promise<String>;
+  description: () => Promise<String>;
+  isComplete: () => Promise<Boolean>;
+  todo: <T = TodoPromise>() => T;
+}
+
 export interface Todo {
   id: ID_Output;
   createdAt: DateTimeOutput;
@@ -478,6 +796,15 @@ export interface TodoPromise extends Promise<Todo>, Fragmentable {
   createdAt: () => Promise<DateTimeOutput>;
   title: () => Promise<String>;
   owner: <T = UserPromise>() => T;
+  tasks: <T = FragmentableArray<Task>>(args?: {
+    where?: TaskWhereInput;
+    orderBy?: TaskOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface TodoSubscription
@@ -487,6 +814,15 @@ export interface TodoSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   title: () => Promise<AsyncIterator<String>>;
   owner: <T = UserSubscription>() => T;
+  tasks: <T = Promise<AsyncIterator<TaskSubscription>>>(args?: {
+    where?: TaskWhereInput;
+    orderBy?: TaskOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface TodoNullablePromise
@@ -496,6 +832,15 @@ export interface TodoNullablePromise
   createdAt: () => Promise<DateTimeOutput>;
   title: () => Promise<String>;
   owner: <T = UserPromise>() => T;
+  tasks: <T = FragmentableArray<Task>>(args?: {
+    where?: TaskWhereInput;
+    orderBy?: TaskOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
 }
 
 export interface User {
@@ -557,25 +902,25 @@ export interface UserNullablePromise
   }) => T;
 }
 
-export interface TodoConnection {
+export interface TaskConnection {
   pageInfo: PageInfo;
-  edges: TodoEdge[];
+  edges: TaskEdge[];
 }
 
-export interface TodoConnectionPromise
-  extends Promise<TodoConnection>,
+export interface TaskConnectionPromise
+  extends Promise<TaskConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<TodoEdge>>() => T;
-  aggregate: <T = AggregateTodoPromise>() => T;
+  edges: <T = FragmentableArray<TaskEdge>>() => T;
+  aggregate: <T = AggregateTaskPromise>() => T;
 }
 
-export interface TodoConnectionSubscription
-  extends Promise<AsyncIterator<TodoConnection>>,
+export interface TaskConnectionSubscription
+  extends Promise<AsyncIterator<TaskConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<TodoEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateTodoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<TaskEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateTaskSubscription>() => T;
 }
 
 export interface PageInfo {
@@ -599,6 +944,60 @@ export interface PageInfoSubscription
   hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
   startCursor: () => Promise<AsyncIterator<String>>;
   endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface TaskEdge {
+  node: Task;
+  cursor: String;
+}
+
+export interface TaskEdgePromise extends Promise<TaskEdge>, Fragmentable {
+  node: <T = TaskPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface TaskEdgeSubscription
+  extends Promise<AsyncIterator<TaskEdge>>,
+    Fragmentable {
+  node: <T = TaskSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateTask {
+  count: Int;
+}
+
+export interface AggregateTaskPromise
+  extends Promise<AggregateTask>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateTaskSubscription
+  extends Promise<AsyncIterator<AggregateTask>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface TodoConnection {
+  pageInfo: PageInfo;
+  edges: TodoEdge[];
+}
+
+export interface TodoConnectionPromise
+  extends Promise<TodoConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<TodoEdge>>() => T;
+  aggregate: <T = AggregateTodoPromise>() => T;
+}
+
+export interface TodoConnectionSubscription
+  extends Promise<AsyncIterator<TodoConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<TodoEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateTodoSubscription>() => T;
 }
 
 export interface TodoEdge {
@@ -702,6 +1101,56 @@ export interface BatchPayloadSubscription
   extends Promise<AsyncIterator<BatchPayload>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface TaskSubscriptionPayload {
+  mutation: MutationType;
+  node: Task;
+  updatedFields: String[];
+  previousValues: TaskPreviousValues;
+}
+
+export interface TaskSubscriptionPayloadPromise
+  extends Promise<TaskSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = TaskPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = TaskPreviousValuesPromise>() => T;
+}
+
+export interface TaskSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<TaskSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = TaskSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = TaskPreviousValuesSubscription>() => T;
+}
+
+export interface TaskPreviousValues {
+  id: ID_Output;
+  title: String;
+  description?: String;
+  isComplete: Boolean;
+}
+
+export interface TaskPreviousValuesPromise
+  extends Promise<TaskPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  title: () => Promise<String>;
+  description: () => Promise<String>;
+  isComplete: () => Promise<Boolean>;
+}
+
+export interface TaskPreviousValuesSubscription
+  extends Promise<AsyncIterator<TaskPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  title: () => Promise<AsyncIterator<String>>;
+  description: () => Promise<AsyncIterator<String>>;
+  isComplete: () => Promise<AsyncIterator<Boolean>>;
 }
 
 export interface TodoSubscriptionPayload {
@@ -808,6 +1257,16 @@ export type ID_Input = string | number;
 export type ID_Output = string;
 
 /*
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+*/
+export type String = string;
+
+/*
+The `Boolean` scalar type represents `true` or `false`.
+*/
+export type Boolean = boolean;
+
+/*
 DateTime scalar input type, allowing Date
 */
 export type DateTimeInput = Date | string;
@@ -818,19 +1277,9 @@ DateTime scalar output type, which is always a string
 export type DateTimeOutput = string;
 
 /*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-*/
-export type String = string;
-
-/*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
 */
 export type Int = number;
-
-/*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
 
 export type Long = string;
 
@@ -845,6 +1294,10 @@ export const models: Model[] = [
   },
   {
     name: "User",
+    embedded: false
+  },
+  {
+    name: "Task",
     embedded: false
   }
 ];

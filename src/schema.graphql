@@ -1,21 +1,25 @@
 type Query {
     info: String!
-    feed: [Todo!]!
-    todo(id: ID!): Todo!
+    fetchTodos: [Todo!]!
+    todo(todoID: ID!): Todo!
 }
 
 type Mutation {
-    createTodo(title: String!): Todo! 
-    updateTodo(id: ID!, title: String): Todo!
-    deleteTodo(id: ID!): Todo! 
     signup(name: String!, email: String!, password: String!):AuthPayLoad!
     signin(email: String!, password: String!):AuthPayLoad!
+    createTodo(title: String!): Todo! 
+    updateTodo(todoID: ID!, title: String): Todo!
+    deleteTodo(todoID: ID!): Todo! 
+    createTask(title: String!, description: String, todoID: ID!): Task!
+    updateTask(taskID: ID!, title: String, description: String, isComplete: Boolean): Task!
+    deleteTask(taskID: ID!): String!
 }
 
 type Todo {
     id: ID!
     title: String!
     owner: User!
+    tasks: [Task!]
 }
 
 type AuthPayLoad {
@@ -28,4 +32,12 @@ type User {
     name: String!
     email: String!  
     todos: [Todo!]! 
+}
+
+type Task {
+    id: ID!
+    title: String!
+    description: String
+    isComplete: Boolean!
+    todo: Todo!
 }

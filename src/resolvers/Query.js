@@ -1,27 +1,34 @@
-const { getUserId, APP_SECRET } = require('../utils');
+const { getUserID } = require('../utils');
 
 function info() {
-
-    return 'Testing';
+    return 'Testing the resolvers';
 }
 
-function feed(root, args, context, info) {
-    const userID = getUserId(context);
-    return context.prisma.todos({
+async function fetchTodos(root, args, context, info) {
+    
+    const clientID = await getUserID(context); 
+    let client = await context.prisma.user({
+        id: clientID
+    });
+
+    if (!client)
+        throw new Error('Invalid client');
+
+    return await context.prisma.todoes({
         where: {
             owner: {
-                id: userID
+                id: clientID
             }
         }
     });
 }
 
-function todo(root, args, context, info) {
-    return context.prisma.todo({ id: args.id });
+async function todo(root, args, context, info) {
+    return await context.prisma.todo({ id: args.todoID });
 }
 
 module.exports = {
     info,
-    feed,
+    fetchTodos,
     todo,
 };

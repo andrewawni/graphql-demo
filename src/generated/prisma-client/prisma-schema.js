@@ -3,7 +3,11 @@ module.exports = {
   // Please don't change this file manually but run `prisma generate` to update it.
   // For more information, please read the docs: https://www.prisma.io/docs/prisma-client/
 
-/* GraphQL */ `type AggregateTodo {
+/* GraphQL */ `type AggregateTask {
+  count: Int!
+}
+
+type AggregateTodo {
   count: Int!
 }
 
@@ -20,6 +24,12 @@ scalar DateTime
 scalar Long
 
 type Mutation {
+  createTask(data: TaskCreateInput!): Task!
+  updateTask(data: TaskUpdateInput!, where: TaskWhereUniqueInput!): Task
+  updateManyTasks(data: TaskUpdateManyMutationInput!, where: TaskWhereInput): BatchPayload!
+  upsertTask(where: TaskWhereUniqueInput!, create: TaskCreateInput!, update: TaskUpdateInput!): Task!
+  deleteTask(where: TaskWhereUniqueInput!): Task
+  deleteManyTasks(where: TaskWhereInput): BatchPayload!
   createTodo(data: TodoCreateInput!): Todo!
   updateTodo(data: TodoUpdateInput!, where: TodoWhereUniqueInput!): Todo
   updateManyTodoes(data: TodoUpdateManyMutationInput!, where: TodoWhereInput): BatchPayload!
@@ -52,6 +62,9 @@ type PageInfo {
 }
 
 type Query {
+  task(where: TaskWhereUniqueInput!): Task
+  tasks(where: TaskWhereInput, orderBy: TaskOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Task]!
+  tasksConnection(where: TaskWhereInput, orderBy: TaskOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TaskConnection!
   todo(where: TodoWhereUniqueInput!): Todo
   todoes(where: TodoWhereInput, orderBy: TodoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Todo]!
   todoesConnection(where: TodoWhereInput, orderBy: TodoOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TodoConnection!
@@ -62,8 +75,242 @@ type Query {
 }
 
 type Subscription {
+  task(where: TaskSubscriptionWhereInput): TaskSubscriptionPayload
   todo(where: TodoSubscriptionWhereInput): TodoSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+}
+
+type Task {
+  id: ID!
+  title: String!
+  description: String
+  isComplete: Boolean!
+  todo: Todo
+}
+
+type TaskConnection {
+  pageInfo: PageInfo!
+  edges: [TaskEdge]!
+  aggregate: AggregateTask!
+}
+
+input TaskCreateInput {
+  id: ID
+  title: String!
+  description: String
+  isComplete: Boolean
+  todo: TodoCreateOneWithoutTasksInput
+}
+
+input TaskCreateManyWithoutTodoInput {
+  create: [TaskCreateWithoutTodoInput!]
+  connect: [TaskWhereUniqueInput!]
+}
+
+input TaskCreateWithoutTodoInput {
+  id: ID
+  title: String!
+  description: String
+  isComplete: Boolean
+}
+
+type TaskEdge {
+  node: Task!
+  cursor: String!
+}
+
+enum TaskOrderByInput {
+  id_ASC
+  id_DESC
+  title_ASC
+  title_DESC
+  description_ASC
+  description_DESC
+  isComplete_ASC
+  isComplete_DESC
+}
+
+type TaskPreviousValues {
+  id: ID!
+  title: String!
+  description: String
+  isComplete: Boolean!
+}
+
+input TaskScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  isComplete: Boolean
+  isComplete_not: Boolean
+  AND: [TaskScalarWhereInput!]
+  OR: [TaskScalarWhereInput!]
+  NOT: [TaskScalarWhereInput!]
+}
+
+type TaskSubscriptionPayload {
+  mutation: MutationType!
+  node: Task
+  updatedFields: [String!]
+  previousValues: TaskPreviousValues
+}
+
+input TaskSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: TaskWhereInput
+  AND: [TaskSubscriptionWhereInput!]
+  OR: [TaskSubscriptionWhereInput!]
+  NOT: [TaskSubscriptionWhereInput!]
+}
+
+input TaskUpdateInput {
+  title: String
+  description: String
+  isComplete: Boolean
+  todo: TodoUpdateOneWithoutTasksInput
+}
+
+input TaskUpdateManyDataInput {
+  title: String
+  description: String
+  isComplete: Boolean
+}
+
+input TaskUpdateManyMutationInput {
+  title: String
+  description: String
+  isComplete: Boolean
+}
+
+input TaskUpdateManyWithoutTodoInput {
+  create: [TaskCreateWithoutTodoInput!]
+  delete: [TaskWhereUniqueInput!]
+  connect: [TaskWhereUniqueInput!]
+  set: [TaskWhereUniqueInput!]
+  disconnect: [TaskWhereUniqueInput!]
+  update: [TaskUpdateWithWhereUniqueWithoutTodoInput!]
+  upsert: [TaskUpsertWithWhereUniqueWithoutTodoInput!]
+  deleteMany: [TaskScalarWhereInput!]
+  updateMany: [TaskUpdateManyWithWhereNestedInput!]
+}
+
+input TaskUpdateManyWithWhereNestedInput {
+  where: TaskScalarWhereInput!
+  data: TaskUpdateManyDataInput!
+}
+
+input TaskUpdateWithoutTodoDataInput {
+  title: String
+  description: String
+  isComplete: Boolean
+}
+
+input TaskUpdateWithWhereUniqueWithoutTodoInput {
+  where: TaskWhereUniqueInput!
+  data: TaskUpdateWithoutTodoDataInput!
+}
+
+input TaskUpsertWithWhereUniqueWithoutTodoInput {
+  where: TaskWhereUniqueInput!
+  update: TaskUpdateWithoutTodoDataInput!
+  create: TaskCreateWithoutTodoInput!
+}
+
+input TaskWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  title: String
+  title_not: String
+  title_in: [String!]
+  title_not_in: [String!]
+  title_lt: String
+  title_lte: String
+  title_gt: String
+  title_gte: String
+  title_contains: String
+  title_not_contains: String
+  title_starts_with: String
+  title_not_starts_with: String
+  title_ends_with: String
+  title_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  isComplete: Boolean
+  isComplete_not: Boolean
+  todo: TodoWhereInput
+  AND: [TaskWhereInput!]
+  OR: [TaskWhereInput!]
+  NOT: [TaskWhereInput!]
+}
+
+input TaskWhereUniqueInput {
+  id: ID
 }
 
 type Todo {
@@ -71,6 +318,7 @@ type Todo {
   createdAt: DateTime!
   title: String!
   owner: User
+  tasks(where: TaskWhereInput, orderBy: TaskOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Task!]
 }
 
 type TodoConnection {
@@ -83,6 +331,7 @@ input TodoCreateInput {
   id: ID
   title: String!
   owner: UserCreateOneWithoutTodosInput
+  tasks: TaskCreateManyWithoutTodoInput
 }
 
 input TodoCreateManyWithoutOwnerInput {
@@ -90,9 +339,21 @@ input TodoCreateManyWithoutOwnerInput {
   connect: [TodoWhereUniqueInput!]
 }
 
+input TodoCreateOneWithoutTasksInput {
+  create: TodoCreateWithoutTasksInput
+  connect: TodoWhereUniqueInput
+}
+
 input TodoCreateWithoutOwnerInput {
   id: ID
   title: String!
+  tasks: TaskCreateManyWithoutTodoInput
+}
+
+input TodoCreateWithoutTasksInput {
+  id: ID
+  title: String!
+  owner: UserCreateOneWithoutTodosInput
 }
 
 type TodoEdge {
@@ -178,6 +439,7 @@ input TodoSubscriptionWhereInput {
 input TodoUpdateInput {
   title: String
   owner: UserUpdateOneWithoutTodosInput
+  tasks: TaskUpdateManyWithoutTodoInput
 }
 
 input TodoUpdateManyDataInput {
@@ -205,13 +467,33 @@ input TodoUpdateManyWithWhereNestedInput {
   data: TodoUpdateManyDataInput!
 }
 
+input TodoUpdateOneWithoutTasksInput {
+  create: TodoCreateWithoutTasksInput
+  update: TodoUpdateWithoutTasksDataInput
+  upsert: TodoUpsertWithoutTasksInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: TodoWhereUniqueInput
+}
+
 input TodoUpdateWithoutOwnerDataInput {
   title: String
+  tasks: TaskUpdateManyWithoutTodoInput
+}
+
+input TodoUpdateWithoutTasksDataInput {
+  title: String
+  owner: UserUpdateOneWithoutTodosInput
 }
 
 input TodoUpdateWithWhereUniqueWithoutOwnerInput {
   where: TodoWhereUniqueInput!
   data: TodoUpdateWithoutOwnerDataInput!
+}
+
+input TodoUpsertWithoutTasksInput {
+  update: TodoUpdateWithoutTasksDataInput!
+  create: TodoCreateWithoutTasksInput!
 }
 
 input TodoUpsertWithWhereUniqueWithoutOwnerInput {
@@ -258,6 +540,9 @@ input TodoWhereInput {
   title_ends_with: String
   title_not_ends_with: String
   owner: UserWhereInput
+  tasks_every: TaskWhereInput
+  tasks_some: TaskWhereInput
+  tasks_none: TaskWhereInput
   AND: [TodoWhereInput!]
   OR: [TodoWhereInput!]
   NOT: [TodoWhereInput!]

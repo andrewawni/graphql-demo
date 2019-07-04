@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken')
 const APP_SECRET = 'secretsecret'
 
-function getUserId(context) {
+function getUserID(context) {
+
   const Authorization = context.request.get('Authorization')
-//   console.log(context.request);
   
   if (Authorization) {
     const token = Authorization.replace('Bearer ', '')
@@ -14,7 +14,26 @@ function getUserId(context) {
   throw new Error('Not authenticated')
 }
 
+async function authorize(context, targetUser)
+{
+  
+  const clientID = await getUserID(context);
+  let client = await context.prisma.user({
+    id: clientID
+  });
+
+  if(!client)
+    throw new Error('Invalid client');
+
+  if(!targetUser)
+    throw new Error('Invalid target');
+
+  if(!(client.id === targetUser.id))
+    throw new Error('Unauthorized to complete this process');
+  
+}
 module.exports = {
   APP_SECRET,
-  getUserId,
+  getUserID,
+  authorize,
 }
